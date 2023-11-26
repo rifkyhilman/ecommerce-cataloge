@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <ProductDisplay />
+    <div class="container-main">
+      <ProductDisplay />
+    </div>
   </div>
 </template>
 
@@ -17,5 +19,14 @@ export default {
 </script>
 
 <style>
+  @import './assets/style/page.css';
 
+  body{
+    margin: 0;
+    padding: 0;
+  };
+
+  .container-main {
+    background-color: var(--purple);
+  }
 </style>
