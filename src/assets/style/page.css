@@ -26,13 +26,26 @@
     align-items: center;
 }
 
+
+/* Background Colors */
+
 .bg-blue {
     background: linear-gradient(180deg,var(--blue) 65%,var(--white) 50%);
+}
+
+.bg-pink {
+    background: linear-gradient(180deg,var(--pink) 65%,var(--white) 50%);
+}
+
+.bg-gray {
+    background: linear-gradient(180deg,var(--gray) 65%,var(--white) 50%);
 }
 
 .bg-navy {
     background-color: var(--navy);
 }
+
+/* !--.-- */
 
 .font-navy {
     color: var(--navy);

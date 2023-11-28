@@ -1,12 +1,11 @@
 <template>
-    <LoaderPage v-if="loading" />
-    <div v-else class="container bg-blue">
+    <div :class="{'container bg-blue':isMen, 'container bg-pink':isWomen, 'container bg-gray':isOther}">
         <div class="overlay">
             <img src="../assets/images/bg-pattern.svg" />
         </div>
         <div class="container-card">
             <div class="image-card">
-                    <img :src="image" />
+                <img :src="image" />
             </div>
             <div class="content-card">
                 <div class="content-card-top">
@@ -43,19 +42,20 @@
                         <button class="content-card-btn-next" @click="Tambah">Next Product</button>
                     </div>
                 </div>
-        </div> 
+            </div> 
         </div>
+        <UnavailablePage v-if="isOther" />
     </div>
 </template>
 
 <script>
-import LoaderPage from './LoaderPage.vue';
+import UnavailablePage from './UnavailablePage.vue';
 
 
 export default {
     name: "ProductDisplay",
-    components: { 
-        LoaderPage 
+    components: {
+        UnavailablePage
     },
     data() {
         return {
@@ -66,8 +66,13 @@ export default {
             image: null,
             rating: null,
             category: null,
+            isMen: null,
+            isWomen: null,
+            isOther: null,
             searchDebounce: null,
-            loading:false
+            loading:false,
+            womens: "women's clothing",
+            mens: "men's clothing"
         };
     },
     created() {
@@ -86,17 +91,41 @@ export default {
             }, 2000);
         },
         async fetchFromApi(val) {
-            const apiUrl = process.env.VUE_APP_API_URL;
-            const api = await fetch(apiUrl + val);
-            const productData = await api.json();
+            try {
+                const apiUrl = process.env.VUE_APP_API_URL;
+                const api = await fetch(apiUrl + val);
+                const productData = await api.json();
 
-            this.loading = false;
-            this.title = productData.title;
-            this.price = productData.price;
-            this.description = productData.description;
-            this.image = productData.image;
-            this.rating = productData.rating.rate;
-            this.category = productData.category;
+                this.loading = false;
+                this.title = productData.title;
+                this.price = productData.price;
+                this.description = productData.description;
+                this.image = productData.image;
+                this.rating = productData.rating.rate;
+                this.category = productData.category;
+
+                if (productData.category === "men's clothing"){
+                    this.isMen = true;
+                    this.isWomen = false;
+                    this.isOther = false;
+                } else if (productData.category === "women's clothing"){
+                    this.isWomen = true;
+                    this.isMen = false;
+                    this.isOther = false;
+                } else {
+                    this.isOther = true;
+                    this.isMen = false;
+                    this.isWomen = false;
+                }
+
+                setTimeout(() => {
+                    this.$emit('sendDataFromChild', false);
+                }, 3000);
+                    
+            } catch (error) {
+                console.log(error);
+            }
+        
         },
         Tambah() {
             this.index == 20 ? this.index = 1 : this.index++;

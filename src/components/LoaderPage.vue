@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
     .lds-roller {
         display: inline-block;
         position: relative;
