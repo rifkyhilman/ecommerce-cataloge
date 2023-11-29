@@ -1,16 +1,17 @@
 <template>
-    <div :class="{'container bg-blue':isMen, 'container bg-pink':isWomen, 'container bg-gray':isOther}">
+    <LoaderPage v-if="isLoaded" />
+    <div v-else :class="{'container bg-blue':isMen, 'container bg-pink':isWomen, 'container bg-gray':isOther}">
         <div class="overlay">
             <img src="../assets/images/bg-pattern.svg" />
         </div>
-        <div class="container-card">
+        <div v-if="!isOther" class="container-card">
             <div class="image-card">
                 <img :src="image" />
             </div>
             <div class="content-card">
                 <div class="content-card-top">
                     <div class="content-card-title">
-                        <h3 class="font-navy">
+                        <h3 :class="{'font-navy':isMen , 'font-magenta':isWomen}">
                             {{ title }}
                         </h3>
                     </div>
@@ -21,11 +22,11 @@
                         <div class="content-card-rating-detail">
                             <span> {{ rating }}/5 </span>
                             <div class="content-card-rating-icon">
-                                <span class="bg-navy circle"></span>
-                                <span class="bg-navy circle"></span>
-                                <span class="bg-navy circle"></span>
-                                <span class="bg-navy circle"></span>
-                                <span class="bg-navy circle"></span>
+                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
+                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
+                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
+                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
+                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
                             </div>
                         </div>
                     </div>
@@ -35,28 +36,39 @@
                 </div>
                 <div class="content-card-bottom">
                     <div class="content-card-price">
-                        <span class="font-navy">${{ price }}</span>
+                        <span :class="{'font-navy':isMen, 'font-magenta':isWomen}">${{ price }}</span>
                     </div>
                     <div class="content-card-btn">
-                        <button class="content-card-btn-buy">Buy Now</button>
-                        <button class="content-card-btn-next" @click="Tambah">Next Product</button>
+                        <button :class="{'content-card-btn-buy bg-navy':isMen, 'content-card-btn-buy bg-magenta':isWomen}">Buy Now</button>
+                        <button :class="{'content-card-btn-next border-navy font-navy':isMen, 'content-card-btn-next border-magenta font-magenta':isWomen}" @click="Tambah">Next Product</button>
                     </div>
                 </div>
             </div> 
         </div>
-        <UnavailablePage v-if="isOther" />
+        <div v-else class="container-card-unavailable">
+            <div class="container-card-unavailable-content">
+                <div class="overlay-unavailable">
+                    <img src="../assets/images/sad-face.svg" />
+                </div>
+                <div class="content-card-unavailable">
+                    <p>This product is unavailable to show</p>
+                    <div class="content-card-unavailable-btn">
+                        <button @click="Tambah" class="content-card-unavailable-btn-next"> Next Product </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-import UnavailablePage from './UnavailablePage.vue';
-
+import LoaderPage from './LoaderPage.vue';
 
 export default {
     name: "ProductDisplay",
     components: {
-        UnavailablePage
-    },
+    LoaderPage
+},
     data() {
         return {
             index: 1,
@@ -69,8 +81,7 @@ export default {
             isMen: null,
             isWomen: null,
             isOther: null,
-            searchDebounce: null,
-            loading:false,
+            isLoaded: true,
             womens: "women's clothing",
             mens: "men's clothing"
         };
@@ -85,10 +96,7 @@ export default {
     },
     methods: {
         handleChange(val) {
-            clearTimeout(this.searchDebounce);
-            this.searchDebounce = setTimeout(() => {
-                this.fetchFromApi(val);
-            }, 2000);
+            this.fetchFromApi(val);
         },
         async fetchFromApi(val) {
             try {
@@ -119,8 +127,8 @@ export default {
                 }
 
                 setTimeout(() => {
-                    this.$emit('sendDataFromChild', false);
-                }, 3000);
+                    this.isLoaded = false;
+                }, 1000);
                     
             } catch (error) {
                 console.log(error);
@@ -129,7 +137,7 @@ export default {
         },
         Tambah() {
             this.index == 20 ? this.index = 1 : this.index++;
-            this.loading = true;
+            this.isLoaded = true;
         }
     }
 }
@@ -142,13 +150,12 @@ export default {
         width: 100%;
         position: absolute;
         z-index: 1;
-        top: 0;
+        top: -16%;
         left: 0;
     }
 
     .overlay img {
         width: 100%;
-        height: 450px;
     }
 
 
@@ -234,7 +241,6 @@ export default {
     }
 
     .content-card-btn-buy {
-        background-color: var(--navy);
         color: var(--white);
         border: none;
         width: 35%;
@@ -245,16 +251,13 @@ export default {
     }
 
     .content-card-btn-buy:hover {
-        background-color: var(--white);
-        color: var(--navy);
-        border: 2px solid var(--navy);
+        background-color: var(--black);
+        color: var(--white);
     }
 
     .content-card-btn-next {
         background-color: var(--white);
-        color: var(--navy);
         border: none;
-        border: 2px solid var(--navy);
         width: 35%;
         height: 36px;
         font-size: 16px;
@@ -264,7 +267,76 @@ export default {
     }
 
     .content-card-btn-next:hover {
-        background-color: var(--navy);
+        background-color: var(--black);
+        color: var(--white);
+    }
+
+    /* UNVAILABLE */
+
+    .container-card-unavailable {
+        display: flex;
+        position: relative;
+        z-index: 2;
+        width: 80%;
+        height: 70vh;
+        background-color: var(--white);
+        border-radius: 10px;
+        padding: 48px 32px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+    }
+
+    .container-card-unavailable-content {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .overlay-unavailable {
+        position: absolute;
+        z-index: 1;
+        top: 15%;
+        left: 10%;
+    }
+
+    .overlay-unavailable img {
+        width: 100%;
+    }
+
+    .content-card-unavailable {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        text-align: center;
+        z-index: 2;
+        font-size: 20px;
+        font-weight: 400;
+    }
+    
+    .content-card-unavailable-btn {
+        margin-top: 16px;
+        width: 100%;
+        display: flex;
+        gap: 12px;
+    }
+
+    .content-card-unavailable-btn-next {
+        margin: 0 auto;
+        border: 2px solid var(--black);
+        color: var(--black);
+        background-color: var(--white);
+        width: 45%;
+        height: 36px;
+        font-size: 16px;
+        border-radius: none;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .content-card-unavailable-btn-next:hover {
+        background-color: var(--black);
         color: var(--white);
     }
 </style>

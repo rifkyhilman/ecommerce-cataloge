@@ -45,11 +45,32 @@
     background-color: var(--navy);
 }
 
-/* !--.-- */
+.bg-magenta {
+    background-color: var(--magenta);
+}
+
+/* FONT Template  */
 
 .font-navy {
     color: var(--navy);
 }
+
+.font-magenta {
+    color: var(--magenta);
+}
+
+/* Border Template  */
+
+.border-navy {
+    border: 2px solid var(--navy);
+}
+
+.border-magenta {
+    border: 2px solid var(--magenta);
+}
+
+
+
 
 .circle {
     display: block;
