@@ -25,8 +25,8 @@
                                 <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
                                 <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
                                 <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
-                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
-                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
+                                <span :class="{'border-navy circle':isMen , 'border-magenta circle':isWomen }"></span>
+                                <span :class="{'border-navy circle':isMen , 'border-magenta circle':isWomen }"></span>
                             </div>
                         </div>
                     </div>
@@ -80,10 +80,8 @@ export default {
             category: null,
             isMen: null,
             isWomen: null,
-            isOther: null,
-            isLoaded: true,
-            womens: "women's clothing",
-            mens: "men's clothing"
+            isOther: false,
+            isLoaded: true
         };
     },
     created() {
@@ -104,31 +102,31 @@ export default {
                 const api = await fetch(apiUrl + val);
                 const productData = await api.json();
 
-                this.loading = false;
-                this.title = productData.title;
-                this.price = productData.price;
-                this.description = productData.description;
-                this.image = productData.image;
-                this.rating = productData.rating.rate;
-                this.category = productData.category;
 
-                if (productData.category === "men's clothing"){
-                    this.isMen = true;
-                    this.isWomen = false;
+                if (productData.category == "men's clothing" || productData.category == "women's clothing"){
+                    this.title = productData.title;
+                    this.price = productData.price;
+                    this.description = productData.description;
+                    this.image = productData.image;
+                    this.rating = productData.rating.rate;
+                    this.category = productData.category;
                     this.isOther = false;
-                } else if (productData.category === "women's clothing"){
-                    this.isWomen = true;
-                    this.isMen = false;
-                    this.isOther = false;
+                    
+                    if (productData.category === "men's clothing"){
+                        this.isMen = true;
+                        this.isWomen = false;
+                    } else if (productData.category === "women's clothing"){
+                        this.isWomen = true;
+                        this.isMen = false;
+                    } 
+
                 } else {
                     this.isOther = true;
-                    this.isMen = false;
-                    this.isWomen = false;
                 }
 
                 setTimeout(() => {
                     this.isLoaded = false;
-                }, 1000);
+                }, 500);
                     
             } catch (error) {
                 console.log(error);
@@ -136,8 +134,8 @@ export default {
         
         },
         Tambah() {
-            this.index == 20 ? this.index = 1 : this.index++;
             this.isLoaded = true;
+            this.index == 20 ? this.index = 1 : this.index++;
         }
     }
 }
@@ -164,11 +162,10 @@ export default {
         grid-template-columns: 30% auto;
         gap: 16px;
         width: 80%;
-        height: 70vh;
         z-index: 2;
         background-color: var(--white);
         border-radius: 10px;
-        padding: 48px 32px;
+        padding: 48px 40px;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
     }
 
@@ -200,10 +197,10 @@ export default {
         display: flex;
         width: 100%;
         justify-content: space-between;
-        margin-top: 14px;
+        margin-top: 17px;
         font-size: 16px;
         color: var(--dark-gray);
-        padding-bottom: 16px;
+        padding-bottom: 14px;
         border-bottom: 1px solid var(--gray);
     }
 
@@ -211,7 +208,7 @@ export default {
         display: grid;
         grid-template-columns: auto auto;
         gap: 5px;
-        margin-right: 25px;
+        margin-right: 10px;
     }
 
     .content-card-rating-icon {
@@ -269,6 +266,10 @@ export default {
     .content-card-btn-next:hover {
         background-color: var(--black);
         color: var(--white);
+    }
+
+    .content-card-bottom {
+        margin-top: 80px;
     }
 
     /* UNVAILABLE */
