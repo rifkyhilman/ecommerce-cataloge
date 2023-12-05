@@ -1,12 +1,23 @@
 <template>
-    <LoaderPage v-if="isLoaded" />
+    <div v-if="isLoaded" class="container">
+        <div class="lds-roller">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
     <div v-else :class="{'container bg-blue':isMen, 'container bg-pink':isWomen, 'container bg-gray':isOther}">
         <div class="overlay">
-            <img src="../assets/images/bg-pattern.svg" />
+            <img src="../assets/images/bg-pattern.svg" alt="background image"/>
         </div>
         <div v-if="!isOther" class="container-card">
             <div class="image-card">
-                <img :src="product.data.image" />
+                <img :src="product.data.image" alt="product image"/>
             </div>
             <div class="content-card">
                 <div class="content-card-top">
@@ -48,7 +59,7 @@
         <div v-else class="container-card-unavailable">
             <div class="container-card-unavailable-content">
                 <div class="overlay-unavailable">
-                    <img src="../assets/images/sad-face.svg" />
+                    <img src="../assets/images/sad-face.svg" alt="unavalilable image"/>
                 </div>
                 <div class="content-card-unavailable">
                     <p>This product is unavailable to show</p>
@@ -62,13 +73,8 @@
 </template>
 
 <script>
-import LoaderPage from './LoaderPage.vue';
-
 export default {
     name: "ProductDisplay",
-    components: {
-    LoaderPage
-},
     data() {
         return {
             index: 1,
