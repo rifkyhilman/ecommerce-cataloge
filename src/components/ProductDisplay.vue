@@ -6,21 +6,21 @@
         </div>
         <div v-if="!isOther" class="container-card">
             <div class="image-card">
-                <img :src="image" />
+                <img :src="product.data.image" />
             </div>
             <div class="content-card">
                 <div class="content-card-top">
                     <div class="content-card-title">
                         <h3 :class="{'font-navy':isMen , 'font-magenta':isWomen}">
-                            {{ title }}
+                            {{ product.data.title }}
                         </h3>
                     </div>
                     <div class="content-card-rating">
                         <div class="categeori">
-                            <span> {{ category }} </span>
+                            <span> {{ product.data.category }} </span>
                         </div>
                         <div class="content-card-rating-detail">
-                            <span> {{ rating }}/5 </span>
+                            <span> {{ product.data.rating.rate }}/5 </span>
                             <div class="content-card-rating-icon">
                                 <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
                                 <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
@@ -31,12 +31,12 @@
                         </div>
                     </div>
                     <div class="content-card-description">
-                    <p> {{ description }} </p> 
+                    <p> {{ product.data.description }} </p> 
                     </div>
                 </div>
                 <div class="content-card-bottom">
                     <div class="content-card-price">
-                        <span :class="{'font-navy':isMen, 'font-magenta':isWomen}">${{ price }}</span>
+                        <span :class="{'font-navy':isMen, 'font-magenta':isWomen}">${{ product.data.price }}</span>
                     </div>
                     <div class="content-card-btn">
                         <button :class="{'content-card-btn-buy bg-navy':isMen, 'content-card-btn-buy bg-magenta':isWomen}">Buy Now</button>
@@ -72,12 +72,7 @@ export default {
     data() {
         return {
             index: 1,
-            title: null,
-            price: null,
-            description: null,
-            image: null,
-            rating: null,
-            category: null,
+            product: {},
             isMen: null,
             isWomen: null,
             isOther: false,
@@ -100,22 +95,17 @@ export default {
             try {
                 const apiUrl = process.env.VUE_APP_API_URL;
                 const api = await fetch(apiUrl + val);
-                const productData = await api.json();
+                const data = await api.json();
 
 
-                if (productData.category == "men's clothing" || productData.category == "women's clothing"){
-                    this.title = productData.title;
-                    this.price = productData.price;
-                    this.description = productData.description;
-                    this.image = productData.image;
-                    this.rating = productData.rating.rate;
-                    this.category = productData.category;
+                if (data.category == "men's clothing" || data.category == "women's clothing"){
+                    this.product = { data };
                     this.isOther = false;
                     
-                    if (productData.category === "men's clothing"){
+                    if (data.category === "men's clothing"){
                         this.isMen = true;
                         this.isWomen = false;
-                    } else if (productData.category === "women's clothing"){
+                    } else if (data.category === "women's clothing"){
                         this.isWomen = true;
                         this.isMen = false;
                     } 
