@@ -33,16 +33,13 @@
                         <div class="content-card-rating-detail">
                             <span> {{ product.data.rating.rate }}/5 </span>
                             <div class="content-card-rating-icon">
-                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
-                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
-                                <span :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
-                                <span :class="{'border-navy circle':isMen , 'border-magenta circle':isWomen }"></span>
-                                <span :class="{'border-navy circle':isMen , 'border-magenta circle':isWomen }"></span>
+                                <span v-for="n in Math.floor(product.data.rating.rate)" :key="n*5" :class="{'bg-navy circle':isMen , 'bg-magenta circle':isWomen }"></span>
+                                <span v-for="j in 5 - Math.floor(product.data.rating.rate)" :key="j-2" :class="{'border-navy circle':isMen , 'border-magenta circle':isWomen }"></span>
                             </div>
                         </div>
                     </div>
                     <div class="content-card-description">
-                    <p> {{ product.data.description }} </p> 
+                        <p> {{ product.data.description }} </p> 
                     </div>
                 </div>
                 <div class="content-card-bottom">
@@ -136,6 +133,7 @@ export default {
                 const data = await api.json();
 
                 this.maxLengthProduct = data.length;
+
             } catch (err) {
                 throw new Error(err);
             }
@@ -220,10 +218,14 @@ export default {
     }
 
     .content-card-description {
+        display: -webkit-box;
         width: 100%;
         margin: 24px 0 24px 0;
         font-size: 18px;
         color: var(--black);
+        overflow: hidden;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
     }
 
     .content-card-price {
