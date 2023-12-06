@@ -51,7 +51,7 @@
                     </div>
                     <div class="content-card-btn">
                         <button :class="{'content-card-btn-buy bg-navy':isMen, 'content-card-btn-buy bg-magenta':isWomen}">Buy Now</button>
-                        <button :class="{'content-card-btn-next border-navy font-navy':isMen, 'content-card-btn-next border-magenta font-magenta':isWomen}" @click="Tambah">Next Product</button>
+                        <button :class="{'content-card-btn-next border-navy font-navy':isMen, 'content-card-btn-next border-magenta font-magenta':isWomen}" @click="addIndex()">Next Product</button>
                     </div>
                 </div>
             </div> 
@@ -64,7 +64,7 @@
                 <div class="content-card-unavailable">
                     <p>This product is unavailable to show</p>
                     <div class="content-card-unavailable-btn">
-                        <button @click="Tambah" class="content-card-unavailable-btn-next"> Next Product </button>
+                        <button @click="addIndex()" class="content-card-unavailable-btn-next"> Next Product </button>
                     </div>
                 </div>
             </div>
@@ -79,24 +79,23 @@ export default {
         return {
             index: 1,
             product: {},
-            isMen: null,
-            isWomen: null,
+            maxLengthProduct: null,
+            isMen: false,
+            isWomen: false,
             isOther: false,
             isLoaded: true
         };
     },
     created() {
         this.fetchFromApi(this.index);
+        this.getLenghtProduct();
     },
     watch: {
         index(val) {
-            this.handleChange(val);
+            this.fetchFromApi(val);
         }
     },
     methods: {
-        handleChange(val) {
-            this.fetchFromApi(val);
-        },
         async fetchFromApi(val) {
             try {
                 const apiUrl = process.env.VUE_APP_API_URL;
@@ -115,25 +114,33 @@ export default {
                         this.isWomen = true;
                         this.isMen = false;
                     } 
-
                 } else {
                     this.isOther = true;
                 }
-
-                setTimeout(() => {
-                    this.isLoaded = false;
-                }, 500);
+                
+                this.isLoaded = false;
                     
-            } catch (error) {
-                console.log(error);
+            } catch (err) {
+                throw new Error(err);
             }
         
         },
-        Tambah() {
+        addIndex() {
             this.isLoaded = true;
-            this.index == 20 ? this.index = 1 : this.index++;
-        }
-    }
+            this.index == this.maxLengthProduct ? this.index = 1 : this.index++;
+        },
+        async getLenghtProduct(){
+            try {
+                const apiUrl = process.env.VUE_APP_API_URL;
+                const api = await fetch(apiUrl);
+                const data = await api.json();
+
+                this.maxLengthProduct = data.length;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+    },
 }
 
 </script>
